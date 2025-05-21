@@ -1,1 +1,51 @@
+def calcular_financiamento_tabela_price(valor_presente, taxa_juros, prazo_meses):
+  """
+  Calcula o valor das parcelas, o saldo devedor e os juros pagos a cada mês de um financiamento na Tabela Price.
+
+  Argumentos:
+    valor_presente: O valor total do financiamento (em reais).
+    taxa_juros: A taxa de juros anual do financiamento (em porcentagem).
+    prazo_meses: O prazo do financiamento em meses.
+
+  Retorna:
+    Um dicionário com as seguintes chaves:
+      parcelas: Uma lista com o valor de cada parcela do financiamento.
+      saldo_devedor: Uma lista com o saldo devedor a cada mês do financiamento.
+      juros_pagos: Uma lista com o valor dos juros pagos a cada mês do financiamento.
+  """
+
+  taxa_juros_mensal = taxa_juros / 1200
+  fator_amortizacao = (1 + taxa_juros_mensal)**prazo_meses / ((1 + taxa_juros_mensal)**prazo_meses - 1)
+
+  parcelas = []
+  saldo_devedor = [0]
+  juros_pagos = [0]
+
+  for mes in range(1, prazo_meses + 1):
+    juros_mensal = saldo_devedor[-1] * taxa_juros_mensal
+    amortizacao = valor_presente * fator_amortizacao
+    parcela = juros_mensal + amortizacao
+
+    parcelas.append(parcela)
+    saldo_devedor.append(saldo_devedor[-1] - amortizacao if mes > 1 else valor_presente)
+    juros_pagos.append(juros_mensal)
+
+  return {
+      "parcelas": parcelas,
+      "saldo_devedor": saldo_devedor,
+      "juros_pagos": juros_pagos,
+  }
+
+# Exemplo de uso
+valor_presente = -25000.00  # Valor total do financiamento (R$)
+taxa_juros = 1.0  # Taxa de juros anual (%)
+prazo_meses = 60  # Prazo do financiamento em meses
+
+resultado = calcular_financiamento_tabela_price(valor_presente, taxa_juros, prazo_meses)
+
+print("Parcelas:", resultado["parcelas"])
+print("-----------------------------------")
+print("Saldo Devedor:", resultado["saldo_devedor"])
+print("-----------------------------------")
+print("Juros Pagos:", resultado["juros_pagos"])
 
